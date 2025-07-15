@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>QR Code Generator</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode/1.5.3/qrcode.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrious/4.0.2/qrious.min.js"></script>
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -294,22 +294,25 @@
             // Clear previous QR code
             document.getElementById('qrcode').innerHTML = '';
             
-            // Generate new QR code
-            QRCode.toCanvas(document.getElementById('qrcode'), content, {
-                width: size,
-                height: size,
-                color: {
-                    dark: color,
-                    light: '#FFFFFF'
-                }
-            }, function (error) {
-                if (error) {
-                    alert('Error generating QR code: ' + error);
-                } else {
-                    currentQRData = content;
-                    document.getElementById('qrOutput').style.display = 'block';
-                }
-            });
+            // Create canvas element
+            const canvas = document.createElement('canvas');
+            document.getElementById('qrcode').appendChild(canvas);
+            
+            // Generate new QR code using QRious
+            try {
+                const qr = new QRious({
+                    element: canvas,
+                    value: content,
+                    size: size,
+                    foreground: color,
+                    background: '#FFFFFF'
+                });
+                
+                currentQRData = content;
+                document.getElementById('qrOutput').style.display = 'block';
+            } catch (error) {
+                alert('Error generating QR code: ' + error.message);
+            }
         }
         
         function downloadQR() {
